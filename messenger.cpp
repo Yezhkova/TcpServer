@@ -34,8 +34,8 @@ Messenger::Messenger( std::string userName, Key shaKey, std::uint16_t port )
 
 void Messenger::addUser(std::string username, std::weak_ptr<Session> session) {
     m_userMap[username] = session.lock();
-    std::string message = "list\n";
-
+    //std::string message = "list\n";
+    std::string message = "";
     for(auto & [username, session] : m_userMap)
     {
         message += username + ';';
@@ -44,7 +44,6 @@ void Messenger::addUser(std::string username, std::weak_ptr<Session> session) {
     //std::cout <<"message == " <<message<<"/end of message\n"; // DEBUG
     for(auto & [username, session] : m_userMap)
     {
-
         boost::asio::async_write( session->getSocket(), boost::asio::buffer( message ),
                                   []( boost::system::error_code error, std::size_t bytes_transferred ) // passed a & to access s
         {
