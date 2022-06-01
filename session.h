@@ -34,5 +34,9 @@ private:
     boost::asio::ip::tcp::socket    m_socket;
     boost::asio::streambuf          streambuf;
     Messenger&                      m_messenger;
+    std::string readFromBuffer      (   const std::string delimiter,
+                                        boost::asio::streambuf& streambuf,
+                                        size_t bytesTransferred
+                                     );
 };
 #endif // SESSION_H
