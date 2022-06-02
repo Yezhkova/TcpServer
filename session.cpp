@@ -21,12 +21,10 @@ void Session::start()
                                                           (boost::system::error_code error, std::size_t bytes_transferred)
     {
         //std::string command( (std::istreambuf_iterator<char>(&self->streambuf)), std::istreambuf_iterator<char>() );
-//        const std::string delimiter = "\n";
-//        std::string command{
-//                buffers_begin(self->streambuf.data()),
-//                buffers_begin(self->streambuf.data()) + bytes_transferred
-//                  - delimiter.size()};
-//        self->streambuf.consume(bytes_transferred);
+        if(error)
+        {
+            m_messenger.removeUser(m_username);
+        }
         std::string command = readFromBuffer("\n", streambuf, bytes_transferred);
         std::cout << "Command == " << command << "/end of command\n"; // DEBUG
         if(command == "init")
@@ -36,9 +34,11 @@ void Session::start()
                                                                   (boost::system::error_code error, std::size_t bytes_transferred)
             {
                 std::string username = readFromBuffer("\n", self->streambuf, bytes_transferred);
+                m_username = username;
                 std::cout << "Name = " << username << "/end of name\n"; // DEBUG
                 self->m_messenger.addUser(username, self);
                 std::cout << "Now " << self->m_messenger.getMapSize() << " users\n"; // DEBUG
+                start();
             });
 
         }

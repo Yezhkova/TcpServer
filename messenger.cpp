@@ -33,9 +33,12 @@ Messenger::Messenger( std::string userName, Key shaKey, std::uint16_t port )
 //}
 
 void Messenger::addUser(std::string username, std::weak_ptr<Session> session) {
+//    if(m_userMap.find(username) != m_userMap.end()) {
+//        // window
+//        return 0;
+//    }
     m_userMap[username] = session.lock();
-    //std::string message = "list\n";
-    std::string message = "";
+    std::string message = "list\n";
     for(auto & [username, session] : m_userMap)
     {
         message += username + ';';
@@ -60,6 +63,12 @@ void Messenger::addUser(std::string username, std::weak_ptr<Session> session) {
         } );
 
     }
+}
+
+void Messenger::removeUser(std::string username)
+{
+    m_userMap.erase(username);
+    LOG(username << " erased. map size now = " << m_userMap.size()) // DEBUG
 }
 
 void Messenger::sendMessage( Key receiver, std::string message )
@@ -99,6 +108,8 @@ void Messenger::async_accept( )
     m_socket.emplace( m_io_context );
     m_acceptor.async_accept( *m_socket, [ this ]( boost::system::error_code error )
     {
+        boost::asio::socket_base::keep_alive option(true);
+        m_socket->set_option(option);
         std::make_shared<Session>( std::move( *m_socket ), *this)->start( );
         async_accept( );
     } );

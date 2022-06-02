@@ -22,6 +22,7 @@ public:
     void sendMessage( Key, std::string );
     bool sendMessage( boost::asio::ip::tcp::endpoint, std::string );
     void addUser(std::string, std::weak_ptr<Session> );
+    void removeUser(std::string username);
     int getMapSize()
     {
         return m_userMap.size();
@@ -37,7 +38,7 @@ private:
     boost::asio::io_context                         m_io_context;
     boost::asio::ip::tcp::acceptor                  m_acceptor;
     std::optional<boost::asio::ip::tcp::socket>     m_socket;
-    std::map<std::string, std::shared_ptr<Session>>   m_userMap;
+    std::map<std::string, std::shared_ptr<Session>> m_userMap;
 
 };
 
