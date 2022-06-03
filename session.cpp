@@ -14,7 +14,7 @@ Session::Session(boost::asio::ip::tcp::socket&& socket, Messenger& messenger)
     LOG( "Received connection from " << socket_remote_endpoint )
 }
 
-void Session::start()
+void Session::readAndExecCommand()
 {
     //std::cout << "Im reading\n"; // DEBUG
     boost::asio::async_read_until(m_socket, streambuf, '\n', [self = shared_from_this(), this]
@@ -23,10 +23,14 @@ void Session::start()
         //std::string command( (std::istreambuf_iterator<char>(&self->streambuf)), std::istreambuf_iterator<char>() );
         if(error)
         {
+            LOG("Closing client: "<<error.message())
             m_messenger.removeUser(m_username);
+            return;
         }
+
         std::string command = readFromBuffer("\n", streambuf, bytes_transferred);
         std::cout << "Command == " << command << "/end of command\n"; // DEBUG
+
         if(command == "init")
         {
             // read usrname;
@@ -38,10 +42,13 @@ void Session::start()
                 std::cout << "Name = " << username << "/end of name\n"; // DEBUG
                 self->m_messenger.addUser(username, self);
                 std::cout << "Now " << self->m_messenger.getMapSize() << " users\n"; // DEBUG
-                start();
+                self->streambuf.consume(bytes_transferred);
+                //LOG("I have just consumed")
+                readAndExecCommand();
             });
 
         }
+
         else if(command == "msg")
         {
             // read receiver name;

@@ -20,24 +20,24 @@ Messenger::Messenger( std::string userName, Key shaKey, std::uint16_t port )
     ServerThread.detach( );
 }
 
-//void Messenger::makeList(boost::asio::ip::tcp::socket socket, std::string s)
-//{
-//    boost::asio::async_read_until(socket, boost::asio::buffer( s ), ';', []
-//                                                          (boost::system::error_code error, std::size_t bytes_transferred)
-//    {
-////        std::string username( (std::istreambuf_iterator<char>(&self->streambuf)), std::istreambuf_iterator<char>() );
-////        std::cout << "Name = " << username << "/end of name\n"; // DEBUG
-////        self->m_messenger.addUser(username, self);
-////        std::cout << "Now " << self->m_messenger.getMapSize() << " users\n"; // DEBUG
-//    });
-//}
-
-void Messenger::addUser(std::string username, std::weak_ptr<Session> session) {
+void Messenger::addUser(std::string usernameToAdd, std::weak_ptr<Session> session) {
 //    if(m_userMap.find(username) != m_userMap.end()) {
 //        // window
 //        return 0;
 //    }
-    m_userMap[username] = session.lock();
+    m_userMap[usernameToAdd] = session.lock();
+    formList();
+}
+
+void Messenger::removeUser(std::string usernameToRemove)
+{
+    m_userMap.erase(usernameToRemove);
+    LOG(usernameToRemove << " erased. map size now = " << m_userMap.size()) // DEBUG
+    formList();
+}
+
+void Messenger::formList()
+{
     std::string message = "list\n";
     for(auto & [username, session] : m_userMap)
     {
@@ -61,14 +61,7 @@ void Messenger::addUser(std::string username, std::weak_ptr<Session> session) {
 
             }
         } );
-
     }
-}
-
-void Messenger::removeUser(std::string username)
-{
-    m_userMap.erase(username);
-    LOG(username << " erased. map size now = " << m_userMap.size()) // DEBUG
 }
 
 void Messenger::sendMessage( Key receiver, std::string message )
@@ -110,7 +103,7 @@ void Messenger::async_accept( )
     {
         boost::asio::socket_base::keep_alive option(true);
         m_socket->set_option(option);
-        std::make_shared<Session>( std::move( *m_socket ), *this)->start( );
+        std::make_shared<Session>( std::move( *m_socket ), *this)->readAndExecCommand( );
         async_accept( );
     } );
 };

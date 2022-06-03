@@ -31,6 +31,7 @@ public:
 
 private:
     void async_accept();
+    void formList();
 
 private:
     std::string                                     m_userName;

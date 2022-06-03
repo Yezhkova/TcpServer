@@ -22,7 +22,7 @@ public:
         std::cout << "Session killed\n";
     };
 
-    void start();
+    void readAndExecCommand();
 
     boost::asio::ip::tcp::socket& getSocket()
     {
