@@ -33,7 +33,7 @@ void Messenger::removeUser(std::string usernameToRemove)
 {
     m_userMap.erase(usernameToRemove);
     LOG(usernameToRemove << " erased. map size now = " << m_userMap.size()) // DEBUG
-    formList();
+    formList(); // if map not empty&&&&&&
 }
 
 void Messenger::formList()
@@ -44,7 +44,18 @@ void Messenger::formList()
         message += username + ';';
     }
     message += '\n';
-    //std::cout <<"message == " <<message<<"/end of message\n"; // DEBUG
+    sendCommandToAll(message);
+}
+
+void Messenger::writeToEverybody(std::string sender, std::string textOfMessage, std::weak_ptr<Session> session) // maybe shared
+{
+    std::string message = "msg\n"+sender+"\n"+textOfMessage+"\n";
+    sendCommandToAll(message);
+}
+
+
+void Messenger::sendCommandToAll(std::string message)
+{
     for(auto & [username, session] : m_userMap)
     {
         boost::asio::async_write( session->getSocket(), boost::asio::buffer( message ),
@@ -63,7 +74,6 @@ void Messenger::formList()
         } );
     }
 }
-
 void Messenger::sendMessage( Key receiver, std::string message )
 {
 

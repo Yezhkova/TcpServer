@@ -28,10 +28,13 @@ public:
         return m_userMap.size();
     }
     //void makeList(boost::asio::ip::tcp::socket socket, std::string s);
+    void writeToEverybody(std::string sender, std::string textOfMessage, std::weak_ptr<Session> session);
+
 
 private:
     void async_accept();
-    void formList();
+    void formList(); 
+    void sendCommandToAll(std::string message);
 
 private:
     std::string                                     m_userName;
