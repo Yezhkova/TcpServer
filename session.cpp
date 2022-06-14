@@ -16,11 +16,9 @@ Session::Session(boost::asio::ip::tcp::socket&& socket, Messenger& messenger)
 
 void Session::readAndExecCommand()
 {
-    //std::cout << "Im reading\n"; // DEBUG
     boost::asio::async_read_until(m_socket, streambuf, '\n', [self = shared_from_this(), this]
                                                           (boost::system::error_code error, std::size_t bytes_transferred)
     {
-        //std::string command( (std::istreambuf_iterator<char>(&self->streambuf)), std::istreambuf_iterator<char>() );
         if(error)
         {
             LOG("Closing client: " << error.message())
@@ -28,7 +26,7 @@ void Session::readAndExecCommand()
             return;
         }
 
-        std::string command = readFromBuffer("\n", streambuf, bytes_transferred);
+        std::string command = readFromBuffer(streambuf, bytes_transferred);
         std::cout << "Command == " << command << "/end of command\n"; // DEBUG
 
         if (command == "init")
@@ -37,13 +35,19 @@ void Session::readAndExecCommand()
             boost::asio::async_read_until(self->m_socket, self->streambuf, '\n', [self, this]
                                                                   (boost::system::error_code error, std::size_t bytes_transferred)
             {
-                std::string username = readFromBuffer("\n", self->streambuf, bytes_transferred);
+                if(error)
+                {
+                    LOG("Closing client: " << error.message())
+                    m_messenger.removeUser(m_username);
+                    return;
+                }
+
+                std::string username = readFromBuffer(self->streambuf, bytes_transferred);
                 m_username = username;
                 std::cout << "Name = " << username << "/end of name\n"; // DEBUG
                 self->m_messenger.addUser(username, self);
                 std::cout << "Now " << self->m_messenger.getMapSize() << " users\n"; // DEBUG
                 self->streambuf.consume(bytes_transferred);
-                //LOG("I have just consumed")
                 readAndExecCommand();
             });
 
@@ -51,32 +55,32 @@ void Session::readAndExecCommand()
 
         else if (command == "msg")
         {
-            boost::asio::async_read_until(self->m_socket, self->streambuf, '\n', [self, this]
+            boost::asio::async_read_until(self->m_socket, self->streambuf, EOF, [self, this]
                                                                   (boost::system::error_code error, std::size_t bytes_transferred)
             {
-                std::string textOfMessage= readFromBuffer("\n", self->streambuf, bytes_transferred);
+                if(error)
+                {
+                    LOG("Closing client: " << error.message())
+                    m_messenger.removeUser(m_username);
+                    return;
+                }
+
+                std::string textOfMessage= readFromBuffer(self->streambuf, bytes_transferred);
                 LOG(m_username << " says " << textOfMessage << '\n')
-                //m_username
                 self->m_messenger.writeToEverybody(m_username, textOfMessage, self);
 
                 self->streambuf.consume(bytes_transferred);
                 readAndExecCommand();
             });
         }
-
-        else if (command == "disconnect")
-        {
-            LOG("Closing client: " << error.message())
-            m_messenger.removeUser(m_username);
-        }
     });
 }
 
-std::string Session::readFromBuffer(const std::string delimiter, boost::asio::streambuf& streambuf, size_t bytesTransferred)
+std::string Session::readFromBuffer(boost::asio::streambuf& streambuf, size_t bytesTransferred)
 {
     std::string s{
         buffers_begin(streambuf.data()),
-        buffers_begin(streambuf.data()) + bytesTransferred - delimiter.size()
+        buffers_begin(streambuf.data()) + bytesTransferred - 1
     };
     streambuf.consume(bytesTransferred);
     return s;

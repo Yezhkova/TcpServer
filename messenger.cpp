@@ -33,7 +33,7 @@ void Messenger::removeUser(std::string usernameToRemove)
 {
     m_userMap.erase(usernameToRemove);
     LOG(usernameToRemove << " erased. map size now = " << m_userMap.size()) // DEBUG
-    formList(); // if map not empty&&&&&&
+    formList();
 }
 
 void Messenger::formList()
@@ -49,7 +49,7 @@ void Messenger::formList()
 
 void Messenger::writeToEverybody(std::string sender, std::string textOfMessage, std::weak_ptr<Session> session) // maybe shared
 {
-    std::string message = "msg\n"+sender+"\n"+textOfMessage+"\n";
+    std::string message = "msg\n"+sender+"\n"+textOfMessage+char(EOF);
     sendCommandToAll(message);
 }
 
@@ -67,7 +67,6 @@ void Messenger::sendCommandToAll(std::string message)
             }
             else
             {
-                // std::cout << "message "<< message << ", sent "<<bytes_transferred << " bytes\n"; // DEBUG
                 std::cout << "bytes transferred: "<< bytes_transferred << " bytes\n"; // DEBUG
 
             }

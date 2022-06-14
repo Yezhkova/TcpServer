@@ -31,7 +31,7 @@ public:
 
 private:
 
-    std::string readFromBuffer      (   const std::string delimiter,
+    std::string readFromBuffer      (
                                         boost::asio::streambuf& streambuf,
                                         size_t bytesTransferred
                                      );
