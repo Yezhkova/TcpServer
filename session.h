@@ -34,7 +34,9 @@ private:
     std::string readFromBuffer      (
                                         boost::asio::streambuf& streambuf,
                                         size_t bytesTransferred
-                                     );
+                                    );
+
+    void closeClient                (boost::system::error_code error);
 
 
 

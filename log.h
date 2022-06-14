@@ -19,4 +19,4 @@ public:
 
 };
 
-#endif // LOG_H
+#endif

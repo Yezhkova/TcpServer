@@ -47,7 +47,7 @@ void Messenger::formList()
     sendCommandToAll(message);
 }
 
-void Messenger::writeToEverybody(std::string sender, std::string textOfMessage, std::weak_ptr<Session> session) // maybe shared
+void Messenger::writeToAll(std::string sender, std::string textOfMessage, std::weak_ptr<Session> session) // maybe shared
 {
     std::string message = "msg\n"+sender+"\n"+textOfMessage+char(EOF);
     sendCommandToAll(message);
@@ -73,37 +73,6 @@ void Messenger::sendCommandToAll(std::string message)
         } );
     }
 }
-void Messenger::sendMessage( Key receiver, std::string message )
-{
-
-};
-
-bool Messenger::sendMessage( boost::asio::ip::tcp::endpoint receiver, std::string message )
-{
-    Log( ).info( "Message " + message + " sent" );
-    boost::asio::ip::tcp::socket socket( m_io_context );
-    boost::system::error_code error;
-    socket.connect( receiver, error );
-
-    if ( error )
-    {
-        Log( ).warn( "Error" );
-        return false;
-    }
-    else
-    {
-        Log( ).info( "OK" );
-
-        boost::asio::async_write( socket, boost::asio::buffer( message ),
-                                  [ ]( boost::system::error_code error, std::size_t bytes_transferred )
-                                  {
-                                        if(error)
-                                            LOG( "Async_write error " << error.message( ))
-                                  } );
-
-        return true;
-    }
-};
 
 void Messenger::async_accept( )
 {

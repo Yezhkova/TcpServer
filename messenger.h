@@ -19,17 +19,17 @@ class Messenger
 {
 public:
     Messenger( std::string, Key, std::uint16_t );
-    void sendMessage( Key, std::string );
-    bool sendMessage( boost::asio::ip::tcp::endpoint, std::string );
     void addUser(std::string, std::weak_ptr<Session> );
     void removeUser(std::string username);
     int getMapSize()
     {
         return m_userMap.size();
     }
-    //void makeList(boost::asio::ip::tcp::socket socket, std::string s);
-    void writeToEverybody(std::string sender, std::string textOfMessage, std::weak_ptr<Session> session);
-
+    void writeToAll(std::string sender, std::string textOfMessage, std::weak_ptr<Session> session);
+    bool contains(std::string username)
+    {
+        return  m_userMap.count(username);
+    }
 
 private:
     void async_accept();
