@@ -53,7 +53,6 @@ void Session::readAndExecCommand()
                 }
                 else
                 {
-
                     m_socket.close();
                     self->streambuf.consume(bytes_transferred);
                 }

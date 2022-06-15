@@ -3,14 +3,12 @@
 
 // server part
 
-Messenger::Messenger( std::string userName, Key shaKey, std::uint16_t port )
+Messenger::Messenger( std::uint16_t port )
         :
-        m_userName( userName ),
-        m_shaKey( shaKey ),
         m_io_context( ),
         m_acceptor( m_io_context, boost::asio::ip::tcp::endpoint( boost::asio::ip::tcp::v4( ), port ))
 {
-    Log( ).info( "Messenger " + userName + " created" );
+    Log( ).info( "Messenger created" );
     async_accept( ); // Doesn't block
     Log( ).info( "Messenger server waiting for connections" );
     std::thread ServerThread( [ & ]
