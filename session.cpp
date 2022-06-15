@@ -41,14 +41,23 @@ void Session::readAndExecCommand()
                     m_messenger.removeUser(m_username);
                     return;
                 }
-
                 std::string username = readFromBuffer(self->streambuf, bytes_transferred);
-                m_username = username;
-                std::cout << "Name = " << username << "/end of name\n"; // DEBUG
-                self->m_messenger.addUser(username, self);
-                std::cout << "Now " << self->m_messenger.getMapSize() << " users\n"; // DEBUG
-                self->streambuf.consume(bytes_transferred);
-                readAndExecCommand();
+                if(!m_messenger.contains(username))
+                {
+                    m_username = username;
+                    std::cout << "Name = " << username << "/end of name\n"; // DEBUG
+                    self->m_messenger.addUser(username, self);
+                    std::cout << "Now " << self->m_messenger.getMapSize() << " users\n"; // DEBUG
+                    self->streambuf.consume(bytes_transferred);
+                    readAndExecCommand();
+                }
+                else
+                {
+
+                    m_socket.close();
+                    self->streambuf.consume(bytes_transferred);
+                }
+                //self->streambuf.consume(bytes_transferred);
             });
 
         }
@@ -64,11 +73,9 @@ void Session::readAndExecCommand()
                     m_messenger.removeUser(m_username);
                     return;
                 }
-
                 std::string textOfMessage= readFromBuffer(self->streambuf, bytes_transferred);
                 LOG(m_username << " says " << textOfMessage << '\n')
                 self->m_messenger.writeToAll(m_username, textOfMessage, self);
-
                 self->streambuf.consume(bytes_transferred);
                 readAndExecCommand();
             });

@@ -21,10 +21,6 @@ Messenger::Messenger( std::string userName, Key shaKey, std::uint16_t port )
 }
 
 void Messenger::addUser(std::string usernameToAdd, std::weak_ptr<Session> session) {
-//    if(m_userMap.find(username) != m_userMap.end()) {
-//        // window
-//        return 0;
-//    }
     m_userMap[usernameToAdd] = session.lock();
     formList();
 }
