@@ -7,6 +7,7 @@
 #include <iostream>
 #include <optional>
 #include <boost/asio.hpp>
+#include "log.h"
 #include <memory>
 
 class Messenger;
@@ -19,7 +20,7 @@ public:
 
     ~Session()
     {
-        std::cout << "Session killed\n";
+        LOG("Session killed")
     };
 
     void readAndExecCommand();
@@ -35,7 +36,6 @@ private:
                                         boost::asio::streambuf& streambuf,
                                         size_t bytesTransferred
                                     );
-
 
 private:
 
