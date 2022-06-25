@@ -8,9 +8,9 @@ Messenger::Messenger( std::uint16_t port )
         m_io_context( ),
         m_acceptor( m_io_context, boost::asio::ip::tcp::endpoint( boost::asio::ip::tcp::v4( ), port ))
 {
-    Log( ).info( "Messenger created" );
+    LOG( "Messenger created" )
     async_accept( ); // Doesn't block
-    Log( ).info( "Messenger server waiting for connections" );
+    LOG( "Messenger server waiting for connections" )
     std::thread ServerThread( [ & ]
                               {
                                   m_io_context.run( );

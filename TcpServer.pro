@@ -20,7 +20,6 @@ win32:LIBS += -lws2_32
 win32:DEFINES += _WIN32_WINNT=0x0501
 
 SOURCES += \
-        log.cpp \
         main.cpp \
         messenger.cpp \
         session.cpp
