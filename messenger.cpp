@@ -41,7 +41,7 @@ void Messenger::formList()
     sendCommandToAll(message);
 }
 
-void Messenger::writeToAll(std::string sender, std::string textOfMessage, std::weak_ptr<Session> session) // maybe shared
+void Messenger::writeToAll(std::string sender, std::string textOfMessage) // maybe shared
 {
     std::string message = "msg\n"+sender+"\n"+textOfMessage+char(EOF);
     sendCommandToAll(message);

@@ -21,7 +21,7 @@ public:
     {
         return m_userMap.size();
     }
-    void writeToAll(std::string sender, std::string textOfMessage, std::weak_ptr<Session> session);
+    void writeToAll(std::string sender, std::string textOfMessage);
     bool contains(std::string username)
     {
         return  m_userMap.count(username);
@@ -33,10 +33,10 @@ private:
     void sendCommandToAll(std::string message);
 
 private:
-    boost::asio::io_context                         m_io_context; //
-    boost::asio::ip::tcp::acceptor                  m_acceptor; //
-    std::optional<boost::asio::ip::tcp::socket>     m_socket; //
-    std::map<std::string, std::shared_ptr<Session>> m_userMap; // owns Session
+    boost::asio::io_context                         m_io_context;
+    boost::asio::ip::tcp::acceptor                  m_acceptor;
+    std::optional<boost::asio::ip::tcp::socket>     m_socket;
+    std::map<std::string, std::shared_ptr<Session>> m_userMap;
 
 };
 

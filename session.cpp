@@ -74,7 +74,7 @@ void Session::readAndExecCommand()
                 }
                 std::string textOfMessage= readFromBuffer(self->streambuf, bytes_transferred);
                 LOG(m_username << " says " << textOfMessage << '\n')
-                self->m_messenger.writeToAll(m_username, textOfMessage, self);
+                self->m_messenger.writeToAll(m_username, textOfMessage);
                 self->streambuf.consume(bytes_transferred);
                 readAndExecCommand();
             });
