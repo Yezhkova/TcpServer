@@ -27,7 +27,7 @@ void Session::readAndExecCommand()
         }
 
         std::string command = readFromBuffer(streambuf, bytes_transferred);
-        std::cout << "Command == " << command << "/end of command\n"; // DEBUG
+        LOG("Command == " << command << "/end of command") // DEBUG
 
         if (command == "init")
         {
@@ -45,9 +45,9 @@ void Session::readAndExecCommand()
                 if(!m_messenger.contains(username))
                 {
                     m_username = username;
-                    std::cout << "Name = " << username << "/end of name\n"; // DEBUG
+                    LOG("Name = " << username << "/end of name") // DEBUG
                     self->m_messenger.addUser(username, self);
-                    std::cout << "Now " << self->m_messenger.getMapSize() << " users\n"; // DEBUG
+                    LOG("Now " << self->m_messenger.getMapSize() << " users") // DEBUG
                     self->streambuf.consume(bytes_transferred);
                     readAndExecCommand();
                 }

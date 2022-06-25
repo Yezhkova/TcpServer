@@ -61,7 +61,7 @@ void Messenger::sendCommandToAll(std::string message)
             }
             else
             {
-                std::cout << "bytes transferred: "<< bytes_transferred << " bytes\n"; // DEBUG
+                LOG("bytes transferred: "<< bytes_transferred << " bytes") // DEBUG
 
             }
         } );
