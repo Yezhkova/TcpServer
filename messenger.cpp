@@ -11,11 +11,10 @@ Messenger::Messenger( std::uint16_t port )
     LOG( "Messenger created" )
     async_accept( ); // Doesn't block
     LOG( "Messenger server waiting for connections" )
-    std::thread ServerThread( [ & ]
+    m_mainThread = std::thread ( [ & ]
                               {
                                   m_io_context.run( );
                               } );
-    ServerThread.detach( );
 }
 
 void Messenger::addUser(std::string usernameToAdd, std::weak_ptr<Session> session) {

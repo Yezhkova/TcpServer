@@ -26,6 +26,11 @@ public:
     {
         return  m_userMap.count(username);
     }
+    void waitServerEnd()
+    {
+        if(m_mainThread.joinable())
+         m_mainThread.join();
+    }
 
 private:
     void async_accept();
@@ -37,6 +42,7 @@ private:
     boost::asio::ip::tcp::acceptor                  m_acceptor;
     std::optional<boost::asio::ip::tcp::socket>     m_socket;
     std::map<std::string, std::shared_ptr<Session>> m_userMap;
+    std::thread                                     m_mainThread;
 
 };
 
